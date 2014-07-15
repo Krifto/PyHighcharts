@@ -99,6 +99,8 @@ def update_template(tmp, key, val, tab_depth=1):
                         elif isinstance(subitem, str):
                             # Need to keep string quotes
                             new_items.append("\'" + subitem + "\'")
+                        elif subitem == None:
+                            new_items.append('null')
                         else:
                             new_items.append(str(subitem))
                     new_vals.append("[{}]".format(",".join(new_items)))
