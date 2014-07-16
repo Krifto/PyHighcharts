@@ -286,7 +286,7 @@ class Highchart(object):
 
     def title(self, title=None):
         """ Bind Title """
-        if not title:
+        if not isinstance(title, str):
             return self.options["title"].text
         else:
             self.options["title"].update_dict(text=title)
@@ -379,6 +379,30 @@ class Highchart(object):
             supress_errors=True, **kwargs)
         self.options["series"].data.append(series_data)
 
+    def update_data_set(self, data, series_type="line", name=None, **kwargs):
+        """ Update Data Set in Place / Create Data Set if Not Exist """
+        self.data_set_count += 1      
+        if not name: 
+            name = "Series %d" % self.data_set_count
+        kwargs.update({'name':name})
+        if self.hold_point_start: 
+            kwargs.update({"pointStart":self.hold_point_start})
+            self.hold_point_start = None
+        if self.hold_point_interval: 
+            kwargs.update({"pointInterval":self.hold_point_interval})
+            self.hold_point_interval = None
+        if series_type not in self.options["plotOptions"].__dict__:
+            to_update = {series_type:SeriesOptions(series_type=series_type,
+                supress_errors=True, **kwargs)}
+            self.options["plotOptions"].update_dict(**to_update)
+        series_data = Series(data, series_type=series_type, \
+            supress_errors=True, **kwargs)
+        for series in self.options["series"].data:
+            if series.name == name:
+                self.options["series"].data.remove(series)
+                break
+        self.options["series"].data.append(series_data)
+        return name
 
     def set_options(self, options, force_options=False):
         """ Set Plot Options """
