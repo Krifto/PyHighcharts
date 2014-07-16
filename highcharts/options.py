@@ -37,7 +37,7 @@ class BaseOptions(object):
         for k, v in kwargs.items(): 
             k = k.split("_")
             if k[0] in self.ALLOWED_OPTIONS:
-                if isinstance(self.ALLOWED_OPTIONS[k[0]],dict):
+                if isinstance(self.ALLOWED_OPTIONS[k[0]], dict):
                     if len(k) > 2:  
                         raise NotImplementedError
                     else:
@@ -54,8 +54,11 @@ class BaseOptions(object):
                             self.__dict__.update({k[0]:{v[v.keys()[0]]:v.values()[0]}})
                         else:
                             self.__dict__.update({k[0]:v})
+                    elif self.ALLOWED_OPTIONS[k[0]] == dict:
+                        self.__dict__.update({k[0]:{k[1]:v}})
+                        
                     else:
-                        print k, v, self.ALLOWED_OPTIONS
+                        print k, "\n", v, "\n", self.ALLOWED_OPTIONS
                         raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k[0]])
             else:
                 print self.ALLOWED_OPTIONS
